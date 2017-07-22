@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>
+            Ajax typing
+        </title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div class="container-fluid">
+            <h1>Search for a city or state (eg. New York)</h1>
+            <form action="" class="searchform form-group">
+                <input type="text" class="search" placeholder="City or State">
+                <ul class="suggestions list-unstyled">
+                    <li>Filter for a city or a state (eg. New York)</li>
+                </ul>
+            </form>
+        </div>
+        <script>
+            const endpoint = "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
+            const cities = [];
+            fetch(endpoint)
+                .then(blurg => blurg.json())
+                .then(datarr => cities.push(...datarr));
+            // console.log(cities);
+            function findMatches (wordToMatch, allCities) {
+                // filter through the cities object
+                return allCities.filter(place => {
+                    // for each city, do this
+                    const regex = new RegExp(wordToMatch, 'gi');
+                    return place.city.match(regex) || place.state.match(regex)
+                })
+            }
+            function displayMatches() {
+                const matchArray = findMatches(this.value, cities)
+                const html = matchArray.map(eachPlace => {
+                    const regex = new RegExp(this.value, 'gi')
+                    const regexedCity = eachPlace.city.replace(regex, `<mark>${this.value}</mark>`);
+                    const regexedState = eachPlace.state.replace(regex, `<mark>${this.value}</mark>`);
+                    return `
+                        <li class="px-2">
+                            <span class="location">${regexedCity}, ${regexedState}</span>
+                            <span class="population pull-right">${eachPlace.population}</span>
+                        </li>
+                    `
+                }).join(' ');
+                const searchResult = document.querySelectorAll('.location');
+                console.log(searchResult);
+                // searchResult.map(result => {
+                //     result.addEventListener('click', setSearchInputValue);
+                // })
+                searchOutput.innerHTML = html
+            }
+            const searchInput = document.querySelector('.search')
+            const searchOutput = document.querySelector('.suggestions')
+
+            searchInput.addEventListener('change', displayMatches);
+            searchInput.addEventListener('keyup', displayMatches);
+
+            // function to set input value to list text value upon click
+
+            function setSearchInputValue () {
+                searchInput.value = this.innerHTML
+            }
+
+            // const searchResult = document.querySelectorAll('.location')
+            // console.log(searchResult);
+            // searchResult.map(result => {
+            //     result.addEventListener('click', setSearchInputValue);
+            // })
+
+        </script>
+    </body>
+</html>
