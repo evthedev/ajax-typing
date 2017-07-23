@@ -33,6 +33,15 @@
                 .then(blurg => blurg.json())
                 .then(datarr => cities.push(...datarr));
             // console.log(cities);
+
+            const searchInput = document.querySelector('.search')
+            const searchOutput = document.querySelector('.suggestions')
+
+            function setSearchInputValue() {
+                searchInput.value += this.value;
+                console.log(this);
+            }
+
             function findMatches (wordToMatch, allCities) {
                 // filter through the cities object
                 return allCities.filter(place => {
@@ -44,6 +53,7 @@
             function displayMatches() {
                 const matchArray = findMatches(this.value, cities)
                 const html = matchArray.map(eachPlace => {
+                    
                     const regex = new RegExp(this.value, 'gi')
                     const regexedCity = eachPlace.city.replace(regex, `<mark>${this.value}</mark>`);
                     const regexedState = eachPlace.state.replace(regex, `<mark>${this.value}</mark>`);
@@ -54,24 +64,19 @@
                         </li>
                     `
                 }).join(' ');
-                const searchResult = document.querySelectorAll('.location');
-                console.log(searchResult);
-                // searchResult.map(result => {
-                //     result.addEventListener('click', setSearchInputValue);
-                // })
+                const searchResults = [...document.querySelectorAll('.population')];
+                searchResults.map(resulto => {
+                    resulto.addEventListener('click', setSearchInputValue);
+                    // console.log(resulto)
+                })
                 searchOutput.innerHTML = html
             }
-            const searchInput = document.querySelector('.search')
-            const searchOutput = document.querySelector('.suggestions')
 
             searchInput.addEventListener('change', displayMatches);
             searchInput.addEventListener('keyup', displayMatches);
 
             // function to set input value to list text value upon click
 
-            function setSearchInputValue () {
-                searchInput.value = this.innerHTML
-            }
 
             // const searchResult = document.querySelectorAll('.location')
             // console.log(searchResult);
